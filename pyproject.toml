@@ -1,0 +1,6 @@
+[tool.mypy]
+
+python_version = "3.14"
+strict = true
+ignore_missing_imports = false
+check_untyped_defs = true
