@@ -93,6 +93,26 @@ def calc_peaks(
     return count_peaks, mean_intervals, spread_mean_intervals, res_peaks
 
 
+def calc_reference_peaks(
+    r_peaks: list[np.ndarray],
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    modes_count = len(r_peaks)
+
+    count_peaks = np.zeros(modes_count, dtype=np.int64)
+    mean_intervals = np.zeros(modes_count, dtype=np.float64)
+    spread_mean_intervals = np.zeros(modes_count, dtype=np.float64)
+
+    for index, peak_indexes in enumerate(r_peaks):
+        peak_time_ms = peak_indexes * 1000
+        count_peaks[index] = peak_time_ms.shape[0]
+
+        interval = np.diff(peak_time_ms)
+        mean_intervals[index] = np.mean(interval)
+        spread_mean_intervals[index] = np.std(interval)
+
+    return count_peaks, mean_intervals, spread_mean_intervals
+
+
 def main() -> None:
     try:
         Hz = 125
@@ -147,6 +167,15 @@ def main() -> None:
         ])
     )
 
+    count_ref, mean_ref, spread_ref = calc_reference_peaks(r_peaks)
+    save_file(
+        "reference_info.csv",
+        np.array([("Режим", "число сокращений сердца", "средний интервал между ними (мс)", "разброс СКО (мс)")] + [
+            (mode, count_ref[i], mean_ref[i], spread_ref[i])
+            for i, mode in enumerate(modes)
+        ])
+    )
+
     filter_visualizer(
         compare_datas=compare_datas,
         filtering_datas=filtering_datas,
@@ -154,6 +183,7 @@ def main() -> None:
         without_baseline_drift_datas=without_baseline_drift_datas,
         peaks=peaks,
         filter_titles=filter_titles,
+        fig_title=f"N: {N}, alpha: {alpha}",
     )
 
     r_peaks_visualizer(

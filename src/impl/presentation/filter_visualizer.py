@@ -10,10 +10,12 @@ def filter_visualizer(
     without_baseline_drift_datas: np.ndarray[tuple[int, int, int], np.dtype[np.number]],
     peaks: list[list[tuple[np.ndarray, np.ndarray]]],
     filter_titles: Sequence[str],
+    fig_title: str = "",
 ) -> None:
     cols = filtered_datas.shape[0]
     rows = filtered_datas.shape[1] * 2 + 1
     fig, ax = plt.subplots(rows, cols, figsize=(10 * cols, 4 * rows), sharey=False)
+    if fig_title: fig.suptitle(fig_title, fontsize=30)
     axes_matrix = np.atleast_2d(ax)
 
     for index in range(rows):

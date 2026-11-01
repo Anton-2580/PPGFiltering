@@ -26,4 +26,4 @@ class PeakFinderImpl(PeakFinder):
             else:
                 i += 1
 
-        return np.array(peak_indexes)
+        return np.array(peak_indexes, dtype=np.int64)
